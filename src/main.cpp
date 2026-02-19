@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <map>
 #include <algorithm>
+#include <set>
 
 namespace fs = std::filesystem;
 
@@ -17,6 +18,8 @@ struct State{
 
 std::vector<State> st;
 int sz, last;
+
+std::vector<std::vector<int>> inv_link;
 
 void sa_init(){
 	st.clear();
@@ -62,6 +65,21 @@ void sa_extend(char c, long long current_pos){
 	last = cur;
 }
 
+void build_tree(){
+        inv_link.assign(sz, std::vector<int>());
+        for(int node = 1; node < sz; node++)
+                inv_link[st[node].link].push_back(node);
+}
+
+void get_occurences(int v, std::vector<long long>& positions){
+	if(st[v].first_pos != -1){
+		positions.push_back(st[v].first_pos);
+	}
+	for(const int&u : inv_link[v]){
+		get_occurences(u, positions);
+	}
+}
+
 int main(){
 	std::string root_path = ".";
 
@@ -81,6 +99,25 @@ int main(){
 		}
 	} catch (const fs::filesystem_error& e){
 		std::cerr << "Error: " << e.what() << std::endl;
+	}
+
+	std::vector<long long> left_sep(super_string.size());
+	std::vector<long long> right_sep(super_string.size());
+	
+	left_sep[0] = -1;
+	for(size_t i = 1; i < super_string.size(); i++){
+		if(super_string[i] == SEPARATOR)
+			left_sep[i] = i;
+		else
+			left_sep[i] = left_sep[i-1];
+	}
+
+	right_sep[(int)super_string.size()-1] = (int)super_string.size();
+	for(int i = (int)super_string.size() - 2; i >= 0; i--){
+		if(super_string[i] == SEPARATOR)
+			right_sep[i] = i;
+		else
+			right_sep[i] = right_sep[i+1];
 	}
 
 	std::cout << "__________________________" << std::endl;
@@ -111,6 +148,12 @@ int main(){
 	std::cout << "Done. Automaton Nodes: " << sz << std::endl;
 	std::cout << "__________________________" << std::endl;
 
+	std::cout << "Building Suffix Link Tree..." << std::endl;
+	
+	build_tree();
+
+	std::cout << "__________________________" << std::endl;
+
 	std::cout << "\n[READY] Type substring to search (or 'exit'):" << std::endl;
 
 	std::string query;
@@ -133,21 +176,22 @@ int main(){
 		if(!found){
 			std::cout << "   [X] Not found." << std::endl;
 		}else{
-			long long end_pos = st[cur].first_pos;
-			long long start_pos = end_pos;
-			
-			while(start_pos >= 0 && super_string[start_pos] != SEPARATOR){
-				start_pos--;
-			}
-			start_pos++;
+			std::vector<long long> all_positions;
+			get_occurences(cur, all_positions);
 
-			long long actual_end = end_pos;
-			while(actual_end < (long long)super_string.size() && super_string[actual_end] != SEPARATOR){
-				actual_end++;
+			std::set<std::string> unique_files;
+
+			for(const long long& pos : all_positions){
+				long long start_pos = left_sep[pos] + 1;
+				long long actual_end = right_sep[pos] - 1;
+
+				std::string filename = super_string.substr(start_pos, actual_end - start_pos + 1);
+				unique_files.insert(filename);
 			}
 
-			std::string filename = super_string.substr(start_pos, actual_end - start_pos);
-			std::cout << "   [V] Found in: " << filename << std::endl;
+			std::cout << "   [V] Found in: " << unique_files.size() << " files:" << std::endl;
+			for(const std::string& file : unique_files)
+				std::cout << "      - " << file << std::endl;
 		}
 	}
 
