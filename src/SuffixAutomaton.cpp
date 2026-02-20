@@ -7,7 +7,7 @@ std::vector<std::vector<int>> inv_link;
 
 void sa_init(){
         st.clear();
-        st.push_back({0, -1, {}, -1});
+        st.push_back({0, -1, -1, {}});
         sz = 1;
         last = 0;
 }

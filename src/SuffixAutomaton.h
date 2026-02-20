@@ -17,7 +17,7 @@ extern int last;
 extern std::vector<std::vector<int>> inv_link;
 
 void sa_init();
-void sa_extend(char c, long long current_position);
+void sa_extend(char c, long long current_pos);
 void build_tree();
 void get_occurences(int v, std::vector<long long>& positions);
 

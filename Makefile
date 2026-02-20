@@ -6,8 +6,8 @@ CXXFLAGS = -std=c++17 -O3 -Wall -Wextra
 TARGET = hypernav
 
 # Source files and Object files
-SRC = src/main.cpp
-OBJ = build/main.o
+SRC = $(wildcard src/*.cpp)
+OBJ = $(patsubst src/%.cpp, build/%.o, $(SRC))
 
 # Default target
 all: $(TARGET)
@@ -17,8 +17,8 @@ $(TARGET): $(OBJ)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJ)
 
 # Compile source files to object files
-build/main.o: src/main.cpp
-	$(CXX) $(CXXFLAGS) -c src/main.cpp -o build/main.o
+build/%.o: src/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Clean up build artifacts
 clean:
