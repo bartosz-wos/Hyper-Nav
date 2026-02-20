@@ -12,10 +12,51 @@ namespace fs = std::filesystem;
 
 constexpr char SEPARATOR = '\1';
 
-int main(){
+void print_help(const std::string& prog_name){
+	std::cout << "Hyper-Nav - Blazing Fast File Search\n"
+		  << "Usage: " << prog_name << " [OPTIONS] [QUERY]\n\n"
+		  << "Options:\n"
+		  << "   --help, -h          Display this help message and exit\n"
+		  << "   --version, -v       Display version information and exit\n"
+		  << "   -k NUM              Max edit distance for Fuzzy Search (default: 0)\n\n"
+		  << "If QUERY is provided, the program performs a single search and exits.\n"
+		  << "Otherwise, it enters interactive mode.\n";
+}
+
+int main(int argc, char* argv[]){
 	std::string root_path = ".";
 
+	int k_errors = 0;
+	std::string single_query = "";
+	bool interactive = true;
+
+	for(int i = 1; i < argc; i++){
+		std::string arg = argv[i];
+
+		if(arg == "--help" || arg == "-h"){
+			print_help(argv[0]);
+			return 0;
+		}else if(arg == "--version" || arg == "-v"){
+			std::cout << "Hyper-Nav v1.0.0\n";
+			return 0;
+		}else if(arg == "-k"){
+			if(i + 1 < argc){
+				i++;
+				k_errors = std::stoi(argv[i]);
+			}else{
+				std::cerr << "Error: Flag -k requires a number!\n";
+				return 1;
+			}
+		}else{
+			single_query = arg;
+			interactive = false;
+		}
+	}
+
 	std::cout << "Indexing: " << root_path << " ..." << std::endl;
+	if(k_errors > 0){
+		std::cout << "Fuzzy Search active! Max edit distance: " << k_errors << std::endl;
+	}
 
 	std::string super_string = "";
 	long long file_count = 0;
@@ -86,27 +127,20 @@ int main(){
 
 	std::cout << "__________________________" << std::endl;
 
-	std::cout << "\n[READY] Type substring to search (or 'exit'):" << std::endl;
-
-	std::string query;
-	while(true){
-		std::cout << "> ";
-		if(!(std::cin >> query) || query == "exit")
-			break;
-
+	auto process_query = [&](const std::string& query){
 		int cur = 0;
 		bool found = true;
 
 		for(char c : query){
 			if(st[cur].next.find(c) == st[cur].next.end()){
-				found = 0;
+				found = false;
 				break;
 			}
 			cur = st[cur].next[c];
 		}
 
 		if(!found){
-			std::cout << "   [X] Not found." << std::endl;
+			std::cout << "   [X] Not found.\n";
 		}else{
 			std::vector<long long> all_positions;
 			get_occurences(cur, all_positions);
@@ -121,9 +155,23 @@ int main(){
 				unique_files.insert(filename);
 			}
 
-			std::cout << "   [V] Found in: " << unique_files.size() << " files:" << std::endl;
+		       	std::cout << "   [V] Found in: " << unique_files.size() << " files:" << std::endl;
 			for(const std::string& file : unique_files)
 				std::cout << "      - " << file << std::endl;
+		}
+	};
+
+	if(!interactive){
+		std::cout << "Searching for: '" << single_query << "'\n";
+		process_query(single_query);
+	}else{
+		std::cout << "\n[READY] Type substring to search (or 'exit'):" << std::endl;
+		std::string query;
+		while(true){
+			std::cout << "> ";
+			if(!(std::cin >> query) || query == "exit")
+				break;
+			process_query(query);
 		}
 	}
 
