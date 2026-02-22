@@ -143,7 +143,7 @@ void SearchEngine::search(const std::string& query, long long k_errors, bool mea
 	dfs_levenshtein(0, 0, 0, query, k_errors, valid_states, visited);
 
 	if(valid_states.empty()){
-		std::cout << "   [X] Not found.\n";
+		std::cout << "\033[1;31m   [X] Not found.\033[0m\n";
 	}else{
 		std::vector<long long> all_positions;
 		for(long long state : valid_states)
@@ -161,7 +161,7 @@ void SearchEngine::search(const std::string& query, long long k_errors, bool mea
 			}
 		}
 
-		std::cout << "   [V] Found in: " << unique_files.size() << " files:" << std::endl;
+		std::cout << "\033[1;32m   [V] Found in: " << unique_files.size() << " files:\033[0m" << std::endl;
 		for(const std::string& file : unique_files)
 			std::cout << "      - " << file << std::endl;
 	}
@@ -171,6 +171,6 @@ void SearchEngine::search(const std::string& query, long long k_errors, bool mea
 	if(measure_time){
 		auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
 		double duration_ms = duration_us / 1000.0;
-		std::cout << "   [TIME] " << duration_us << " us (" << duration_ms << " ms)\n";
+		std::cout << "\033[1;33m   [TIME] " << duration_us << " us (" << duration_ms << " ms)\033[0m\n";
 	}
 }
