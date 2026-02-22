@@ -10,18 +10,34 @@ constexpr char SEPARATOR = '\1';
 
 SearchEngine::SearchEngine() : super_string(""), file_count(0){}
 
-void SearchEngine::build_index(const std::string& root_path){
+void SearchEngine::build_index(const std::string& root_path, bool ignore_hidden){
 	std::cout << "Indexing: " << root_path << " ..." << std::endl;
 
 	try{
-                for(const auto& entry : fs::recursive_directory_iterator(root_path)){
-                        if(entry.is_regular_file()){
-                                std::string path = entry.path().string();
-                                super_string += path;
-                                super_string += SEPARATOR;
-                                file_count ++;
-                        }
-                }
+		fs::recursive_directory_iterator it(root_path, fs::directory_options::skip_permission_denied);
+		fs::recursive_directory_iterator end;
+
+		while(it != end){
+			std::string current_filename = it->path().filename().string();
+
+			if(ignore_hidden && !current_filename.empty() && current_filename[0] == '.'){
+				if(current_filename != "." && current_filename != ".."){
+					if(it->is_directory()){
+						it.disable_recursion_pending();
+					}
+					++it;
+					continue;
+				}
+			}
+
+			if(it->is_regular_file()){
+				std::string path = it->path().string();
+				super_string += path;
+				super_string += SEPARATOR;
+				file_count++;
+			}
+			++it;
+		}
         } catch (const fs::filesystem_error& e){
                 std::cerr << "Error: " << e.what() << std::endl;
         }

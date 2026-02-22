@@ -18,7 +18,7 @@ private:
 public:
 	SearchEngine();
 
-	void build_index(const std::string& root_path);
+	void build_index(const std::string& root_path, bool ignore_hidden = true);
 	void search(const std::string& query, long long k_errors);
 };
 
