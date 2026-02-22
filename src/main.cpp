@@ -9,7 +9,8 @@ void print_help(const std::string& prog_name){
 		  << "Options:\n"
 		  << "   --help, -h          Display this help message and exit\n"
 		  << "   --version, -v       Display version information and exit\n"
-		  << "   -k NUM              Max edit distance for Fuzzy Search (default: 0)\n\n"
+		  << "   -k NUM              Max edit distance for Fuzzy Search (default: 0)\n"
+		  << "   -d, --dir PATH      Target directory to index (default: current directory '.')\n\n"
 		  << "If QUERY is provided, the program performs a single search and exits.\n"
 		  << "Otherwise, it enters interactive mode.\n";
 }
@@ -17,7 +18,7 @@ void print_help(const std::string& prog_name){
 int main(int argc, char* argv[]){
 	std::string root_path = ".";
 
-	int k_errors = 0;
+	long long k_errors = 0;
 	std::string single_query = "";
 	bool interactive = true;
 
@@ -33,9 +34,17 @@ int main(int argc, char* argv[]){
 		}else if(arg == "-k"){
 			if(i + 1 < argc){
 				i++;
-				k_errors = std::stoi(argv[i]);
+				k_errors = std::stoll(argv[i]);
 			}else{
 				std::cerr << "Error: Flag -k requires a number!\n";
+				return 1;
+			}
+		}else if(arg == "-d" || arg == "--dir"){
+			if(i + 1 < argc){
+				i++;
+				root_path = argv[i];
+			}else{
+				std::cerr << "Error: Flag -d requires a path!\n";
 				return 1;
 			}
 		}else{

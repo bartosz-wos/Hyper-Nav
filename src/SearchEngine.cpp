@@ -35,7 +35,7 @@ void SearchEngine::build_index(const std::string& root_path){
 	right_sep.resize(super_string.size());
 
 	left_sep[0] = -1;
-	for(size_t i = 1; i < super_string.size(); i++){
+	for(long long i = 1; i < (long long)super_string.size(); i++){
                 if(super_string[i] == SEPARATOR)
                         left_sep[i] = i;
                 else
@@ -43,7 +43,7 @@ void SearchEngine::build_index(const std::string& root_path){
         }
 
 	right_sep[(long long)super_string.size()-1] = (long long)super_string.size();
-        for(long long i = (int)super_string.size() - 2; i >= 0; i--){
+        for(long long i = (long long)super_string.size() - 2; i >= 0; i--){
                 if(super_string[i] == SEPARATOR)
                         right_sep[i] = i;
                 else
@@ -61,7 +61,7 @@ void SearchEngine::build_index(const std::string& root_path){
         st.reserve(super_string.size() * 2);
         sa_init();
 
-        for(size_t i = 0; i < super_string.size(); i++){
+        for(long long i = 0; i < (long long)super_string.size(); i++){
                 sa_extend(super_string[i], i);
         }
 
