@@ -4,13 +4,16 @@
 #include <iostream>
 #include <filesystem>
 #include <algorithm>
+#include <chrono>
 
 namespace fs = std::filesystem;
 constexpr char SEPARATOR = '\1';
 
 SearchEngine::SearchEngine() : super_string(""), file_count(0){}
 
-void SearchEngine::build_index(const std::string& root_path, bool ignore_hidden){
+void SearchEngine::build_index(const std::string& root_path, bool ignore_hidden, bool measure_time){
+	auto start_time = std::chrono::high_resolution_clock::now();
+
 	std::cout << "Indexing: " << root_path << " ..." << std::endl;
 
 	try{
@@ -89,6 +92,14 @@ void SearchEngine::build_index(const std::string& root_path, bool ignore_hidden)
         build_tree();
 
         std::cout << "__________________________" << std::endl;
+
+	auto end_time = std::chrono::high_resolution_clock::now();
+
+	if(measure_time){
+		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
+		std::cout << "Indexing & Tree Building Time: " << duration << " ms" << std::endl;
+		std::cout << "__________________________" << std::endl;
+	}
 }
 
 void SearchEngine::dfs_levenshtein(long long u, long long q_idx, long long errors, const std::string& query, long long max_errors,
@@ -123,7 +134,9 @@ void SearchEngine::dfs_levenshtein(long long u, long long q_idx, long long error
 	}
 }
 
-void SearchEngine::search(const std::string& query, long long k_errors){
+void SearchEngine::search(const std::string& query, long long k_errors, bool measure_time){
+	auto start_time = std::chrono::high_resolution_clock::now();
+
 	std::set<long long> valid_states;
 	std::set<std::tuple<long long, long long, long long>> visited;
 
@@ -151,5 +164,13 @@ void SearchEngine::search(const std::string& query, long long k_errors){
 		std::cout << "   [V] Found in: " << unique_files.size() << " files:" << std::endl;
 		for(const std::string& file : unique_files)
 			std::cout << "      - " << file << std::endl;
+	}
+
+	auto end_time = std::chrono::high_resolution_clock::now();
+
+	if(measure_time){
+		auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+		double duration_ms = duration_us / 1000.0;
+		std::cout << "   [TIME] " << duration_us << " us (" << duration_ms << " ms)\n";
 	}
 }

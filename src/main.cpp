@@ -11,7 +11,8 @@ void print_help(const std::string& prog_name){
 		  << "   --version, -v       Display version information and exit\n"
 		  << "   -k NUM              Max edit distance for Fuzzy Search (default: 0)\n"
 		  << "   -d, --dir PATH      Target directory to index (default: current directory '.')\n"
-		  << "   -a, --all           Do not ignore hidden files and directories (starting with '.')\n\n"
+		  << "   -a, --all           Do not ignore hidden files and directories (starting with '.')\n"
+		  << "   -t, --time          Display execution time for indexing and searching\n\n"
 		  << "If QUERY is provided, the program performs a single search and exits.\n"
 		  << "Otherwise, it enters interactive mode.\n";
 }
@@ -23,6 +24,7 @@ int main(int argc, char* argv[]){
 	std::string single_query = "";
 	bool interactive = true;
 	bool ignore_hidden = true;
+	bool measure_time = false;
 
 	for(int i = 1; i < argc; i++){
 		std::string arg = argv[i];
@@ -35,6 +37,8 @@ int main(int argc, char* argv[]){
 			return 0;
 		}else if(arg == "-a" || arg == "--all"){
 			ignore_hidden = false;
+		}else if(arg == "-t" || arg == "--time"){
+			measure_time = true;
 		}else if(arg == "-k"){
 			if(i + 1 < argc){
 				i++;
@@ -58,7 +62,7 @@ int main(int argc, char* argv[]){
 	}
 
 	SearchEngine engine;
-	engine.build_index(root_path, ignore_hidden);
+	engine.build_index(root_path, ignore_hidden, measure_time);
 
 	if(k_errors > 0){
 		std::cout << "Fuzzy Search active! Max edit distance: " << k_errors << std::endl;
@@ -78,7 +82,7 @@ int main(int argc, char* argv[]){
 			std::cout << "> ";
 			if(!(std::cin >> query) || query == "exit")
 				break;
-			engine.search(query, k_errors);
+			engine.search(query, k_errors, measure_time);
 		}
 	}
 
