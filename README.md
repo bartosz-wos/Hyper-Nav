@@ -20,11 +20,11 @@ The project uses a standard `Makefile`. Ensure you have a C++17 compatible compi
    ```bash
    mkdir -p build
    ```
-3. Compile the project using **make**:
+3. Compile the project using `make`:
    ```bash
    make
    ```
-   To clean build artifacts, run **make clean**. To compile and run immediately, use **make run**.
+   To clean build artifacts, run `make clean`. To compile and run immediately, use `make run`.
 
 ## Usage
 
