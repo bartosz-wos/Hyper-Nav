@@ -34,9 +34,14 @@ You can run **hypernav** with various flags to customize the search behavior.
 ```
 ### Options
 
--h, --help : Display the help message
--v, --version : Display version information
--k NUM : Max edit distance for Fuzzy Search (default: 0)
--d, --dir PATH : Target directory to index (default: current directory)
--a, --all : Include hidden files and directories (those starting with)
--t, --time : Display execution time for indexing and searching
+`-h`, `--help` : Display the help message
+
+`-v`, `--version` : Display version information
+
+`-k NUM` : Max edit distance for Fuzzy Search (default: 0)
+
+`-d`, `--dir` PATH : Target directory to index (default: current directory)
+
+`-a`, `--all` : Include hidden files and directories (those starting with)
+
+`-t`, `--time` : Display execution time for indexing and searching
