@@ -32,7 +32,7 @@ You can run **hypernav** with various flags to customize the search behavior.
 ```bash
 ./hypernav [OPTIONS] [QUERY]
 ```
-# Options
+### Options
 
 -h, --help : Display the help message
 -v, --version : Display version information
