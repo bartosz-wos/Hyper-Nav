@@ -1,4 +1,4 @@
-#include "SearchEngine.h"
+#include "../include/SearchEngine.h"
 #include "SuffixAutomaton.h"
 
 #include <iostream>

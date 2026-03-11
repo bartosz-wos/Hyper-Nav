@@ -1,6 +1,6 @@
 # Compiler settings 
 CXX = g++
-CXXFLAGS = -std=c++17 -O3 -Wall -Wextra
+CXXFLAGS = -std=c++17 -O3 -Wall -Wextra -Iinclude
 
 # Target executable name
 TARGET = hypernav

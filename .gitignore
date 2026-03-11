@@ -39,3 +39,8 @@
 
 # debug information files
 *.dwo
+
+# Project specific binaries
+hypernav
+nav_out.txt
+find_out.txt

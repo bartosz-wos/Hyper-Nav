@@ -1,4 +1,4 @@
-#include "SuffixAutomaton.h"
+#include "../include/SuffixAutomaton.h"
 
 std::vector<State> st;
 long long sz;
